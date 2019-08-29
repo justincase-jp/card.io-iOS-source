@@ -40,6 +40,7 @@
 #define kStatusBarHeight      20
 
 #define kButtonSizeOutset 20
+#define kCancelButtonPosition 20.0f
 #define kRotationAnimationDuration 0.2f
 #define kButtonRotationDelay (kRotationAnimationDuration + 0.1f)
 
@@ -328,8 +329,9 @@
   }
 
   self.cancelButton.transform = CGAffineTransformIdentity;
+  CGFloat cancelPos = fmin(CGRectGetMinY(cameraPreviewFrame) - self.cancelButtonFrameSize.height - 5.0f, kCancelButtonPosition);
   self.cancelButton.frame = CGRectWithXYAndSize(cameraPreviewFrame.origin.x + 5.0f,
-                                                CGRectGetMaxY(cameraPreviewFrame) - self.cancelButtonFrameSize.height - 5.0f,
+                                                cancelPos,
                                                 self.cancelButtonFrameSize);
 
   if (self.manualEntryButton) {
