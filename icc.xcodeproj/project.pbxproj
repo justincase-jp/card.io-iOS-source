@@ -2170,6 +2170,9 @@
 					92263D6F1B83ACBB003FE678 = {
 						CreatedOnToolsVersion = 7.0;
 					};
+					A553B6E51BE32273006DF551 = {
+						DevelopmentTeam = 846Z92LNFK;
+					};
 				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "icc" */;
@@ -2308,7 +2311,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "if [ -z \"$ICC_VERSION\" ]\nthen\nICC_VERSION=`git describe --match=iOS_[0-9]*\\.[0-9]* --tags --always --dirty | sed \"s/iOS_//\" | sed \"s/-.*//\"`\nfi\necho \"Using version: $ICC_VERSION\"\n\nsed s/icc-version-undefined/$ICC_VERSION/g <Classes/CardIOIccVersion.h.template >Classes/CardIOIccVersion.h";
+			shellScript = "if [ -z \"$ICC_VERSION\" ]\nthen\nICC_VERSION=`git describe --match=iOS_[0-9]*\\.[0-9]* --tags --always --dirty | sed \"s/iOS_//\" | sed \"s/-.*//\"`\nfi\necho \"Using version: $ICC_VERSION\"\n\nsed s/icc-version-undefined/$ICC_VERSION/g <Classes/CardIOIccVersion.h.template >Classes/CardIOIccVersion.h\n";
 		};
 		3E9F4BDB181F03F300F33B48 /* Establish strings pre-commit script */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2602,6 +2605,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A50A54B41BE2F7A800B669FB /* icc_Debug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 846Z92LNFK;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.justincase.cardio.demo;
 			};
 			name = Debug;
 		};
@@ -2609,6 +2614,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A50A54B51BE2F7A800B669FB /* icc_Release.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 846Z92LNFK;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.justincase.cardio.demo;
 			};
 			name = Release;
 		};
@@ -2616,6 +2623,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A50A54B31BE2F7A800B669FB /* icc_AdHoc.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 846Z92LNFK;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.justincase.cardio.demo;
 			};
 			name = AdHoc;
 		};
