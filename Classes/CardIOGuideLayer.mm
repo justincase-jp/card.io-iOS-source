@@ -18,8 +18,13 @@
 #pragma mark - Colors
 
 #define kStandardMinimumBoundsWidth 300.0f
-#define kStandardLineWidth 12.0f
-#define kStandardCornerSize 50.0f
+#define kStandardLineWidth 2.0f
+#define kStandardCornerSize 0.0f
+#define kGuideCenterSize 48.0f
+#define kGuideCornerSize 35.0f
+#define kGuideOffset 8.0f
+#define kGuideAlpha 0.35f
+#define kGuideLineWidth 1.0f
 #define kAdjustFudge 0.2f  // Because without this, we see a mini gap between edge path and corner path.
 
 #define kEdgeDecay 0.5f
@@ -52,6 +57,9 @@ typedef enum {
 @property(nonatomic, strong, readwrite) CAShapeLayer *topRightLayer;
 @property(nonatomic, strong, readwrite) CAShapeLayer *bottomLeftLayer;
 @property(nonatomic, strong, readwrite) CAShapeLayer *bottomRightLayer;
+@property(nonatomic, strong, readwrite) CAShapeLayer *topRightGuideLayer;
+@property(nonatomic, strong, readwrite) CAShapeLayer *bottomLeftGuideLayer;
+@property(nonatomic, strong, readwrite) CAShapeLayer *centerGuideLayer;
 @property(nonatomic, assign, readwrite) BOOL guidesLockedOn;
 @property(nonatomic, assign, readwrite) float edgeScoreTop;
 @property(nonatomic, assign, readwrite) float edgeScoreRight;
@@ -95,6 +103,9 @@ typedef enum {
     _bottomLeftLayer = [CAShapeLayer layer];
     _bottomRightLayer = [CAShapeLayer layer];
 
+    _topRightGuideLayer = [CAShapeLayer layer];
+    _bottomLeftGuideLayer = [CAShapeLayer layer];
+
     _backgroundOverlay = [CAShapeLayer layer];
     _backgroundOverlay.cornerRadius = 0.0f;
     _backgroundOverlay.masksToBounds = YES;
@@ -102,6 +113,12 @@ typedef enum {
     _backgroundOverlay.fillColor = [UIColor colorWithWhite:0.0f alpha:0.7f].CGColor;
     [self addSublayer:_backgroundOverlay];
 
+    _centerGuideLayer = [CAShapeLayer layer];
+    _centerGuideLayer.path = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, kGuideCenterSize, kGuideCenterSize)].CGPath;
+    _centerGuideLayer.fillColor = [UIColor colorWithWhite:0.0f alpha:kGuideAlpha].CGColor;
+    _centerGuideLayer.strokeColor = UIColor.whiteColor.CGColor;
+    [self addSublayer:_centerGuideLayer];
+    
 #if CARDIO_DEBUG
     _debugOverlay = [CALayer layer];
     _debugOverlay.cornerRadius = 0.0f;
@@ -119,6 +136,8 @@ typedef enum {
                            _topRightLayer,
                            _bottomLeftLayer,
                            _bottomRightLayer,
+                           _topRightGuideLayer,
+                           _bottomLeftGuideLayer,
                            nil];
     
     for(CAShapeLayer *layer in edgeLayers) {
@@ -247,9 +266,13 @@ typedef enum {
 }
 
 - (void)animateCornerLayer:(CAShapeLayer *)layer atPoint:(CGPoint)point withPositionType:(CornerPositionType)posType {
+  [self animateCornerLayer:layer atPoint:point withPositionType:posType size:[self cornerSize]];
+}
+
+- (void)animateCornerLayer:(CAShapeLayer *)layer atPoint:(CGPoint)point withPositionType:(CornerPositionType)posType size:(CGFloat)size {
   layer.lineWidth = [self lineWidth];
   
-  CGPathRef newPath = [[self class] newCornerPathFromPoint:point size:[self cornerSize] positionType:posType];
+  CGPathRef newPath = [[self class] newCornerPathFromPoint:point size:size positionType:posType];
   [self animateLayer:layer toNewPath:newPath];
 
   // See above comment on crashes. Same probably applies here. - BPF
@@ -312,6 +335,20 @@ typedef enum {
   [self animateCornerLayer:self.bottomLeftLayer atPoint:bottomLeft withPositionType:kBottomLeft];
   [self animateCornerLayer:self.bottomRightLayer atPoint:bottomRight withPositionType:kBottomRight];
   
+  CGFloat guideCornerSize = [self sizeForBounds:kGuideCornerSize];
+  [self animateCornerLayer:self.topRightGuideLayer
+                   atPoint:CGPointByAddingYOffset(CGPointByAddingXOffset(topRight, kGuideOffset), kGuideOffset)
+          withPositionType:kTopRight
+                      size:guideCornerSize];
+  self.topRightGuideLayer.strokeColor = UIColor.whiteColor.CGColor;
+  self.topRightGuideLayer.lineWidth = kGuideLineWidth;
+  [self animateCornerLayer:self.bottomLeftGuideLayer
+                   atPoint:CGPointByAddingYOffset(CGPointByAddingXOffset(bottomLeft, - kGuideOffset), - kGuideOffset)
+          withPositionType:kBottomLeft
+                      size:guideCornerSize];
+  self.bottomLeftGuideLayer.strokeColor = UIColor.whiteColor.CGColor;
+  self.bottomLeftGuideLayer.lineWidth = kGuideLineWidth;
+
   [self animateCardMask:guideFrame];
 }
 
@@ -457,6 +494,10 @@ typedef enum {
     rotatedGuideFrame = CGRectInset(rotatedGuideFrame, inset, inset);
     [self.guideLayerDelegate guideLayerDidLayout:rotatedGuideFrame];
     
+    CGFloat centerX = CGRectGetMidX(guideFrame) - (kGuideCenterSize / 2);
+    CGFloat centerY = CGRectGetMidY(guideFrame) - (kGuideCenterSize / 2);
+    self.centerGuideLayer.frame = CGRectMake(centerX, centerY, kGuideCenterSize, kGuideCenterSize);
+
 #if CARDIO_DEBUG
   [self rotateDebugOverlay];
 #endif
@@ -468,7 +509,7 @@ typedef enum {
   if (found) {
     self.backgroundOverlay.fillColor = [UIColor colorWithWhite:0.0f alpha:0.8f].CGColor;
   } else {
-    self.backgroundOverlay.fillColor = [UIColor colorWithWhite:0.0f alpha:0.0f].CGColor;
+    self.backgroundOverlay.fillColor = [UIColor colorWithWhite:0.0f alpha:kGuideAlpha].CGColor;
   }
   [self updateStrokes];
 }
