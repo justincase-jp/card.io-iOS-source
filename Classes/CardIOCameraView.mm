@@ -194,14 +194,6 @@
   return self.videoStream.scanner;
 }
 
-- (void)setSuppressFauxCardLayer:(BOOL)suppressFauxCardLayer {
-  if(suppressFauxCardLayer) {
-    self.cardGuide.fauxCardLayer.hidden = YES;
-  }
-  _suppressFauxCardLayer = suppressFauxCardLayer;
-}
-
-
 - (CGRect)guideFrame {
   return [self.cardGuide guideFrame];
 }

@@ -85,7 +85,6 @@ typedef enum {
     _allEdgesFoundDecayedScore = 0.0f;
     _numEdgesFoundDecayedScore = 0.0f;
 
-    _fauxCardLayer = [CAGradientLayer layer];
     _topLayer = [CAShapeLayer layer];
     _bottomLayer = [CAShapeLayer layer];
     _leftLayer = [CAShapeLayer layer];
@@ -95,22 +94,6 @@ typedef enum {
     _topRightLayer = [CAShapeLayer layer];
     _bottomLeftLayer = [CAShapeLayer layer];
     _bottomRightLayer = [CAShapeLayer layer];
-    
-    _fauxCardLayer.cornerRadius = 0.0f;
-    _fauxCardLayer.masksToBounds = YES;
-    _fauxCardLayer.borderWidth = 0.0f;
-    
-    _fauxCardLayer.startPoint = CGPointMake(0.5f, 0.0f); // top center
-    _fauxCardLayer.endPoint = CGPointMake(0.5f, 1.0f); // bottom center
-    _fauxCardLayer.locations = [NSArray arrayWithObjects:
-                                [NSNumber numberWithFloat:0.0f],
-                                [NSNumber numberWithFloat:1.0f],
-                                nil];
-    _fauxCardLayer.colors = [NSArray arrayWithObjects:
-                             (id)[UIColor colorWithWhite:1.0f alpha:0.2f].CGColor,
-                             (id)[UIColor colorWithWhite:0.0f alpha:0.2f].CGColor,
-                             nil];
-    [self addSublayer:_fauxCardLayer];
 
     _backgroundOverlay = [CAShapeLayer layer];
     _backgroundOverlay.cornerRadius = 0.0f;
@@ -289,48 +272,6 @@ typedef enum {
   }
 }
 
-- (void)animateFauxCardLayerToFrame:(CGRect)guideFrame {
-  // TODO: Use CAAnimationGroup?
-  if(CGRectIsEmpty(self.fauxCardLayer.frame)) {
-    SuppressCAAnimation(^{
-      self.fauxCardLayer.frame = guideFrame;
-    });
-  } else {
-    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"frame"];
-    self.fauxCardLayer.frame = guideFrame;
-    animation.fromValue = (id)[NSValue valueWithCGRect:self.fauxCardLayer.frame];
-    animation.toValue = (id)[NSValue valueWithCGRect:guideFrame];
-    animation.duration = self.animationDuration;
-    [self.fauxCardLayer addAnimation:animation forKey:@"animateFrame"];
-    self.fauxCardLayer.frame = guideFrame;
-  }
-  
-  CGPoint gradientStart = CGPointZero;
-  CGPoint gradientEnd = CGPointZero;
-  switch (self.deviceOrientation) {
-    case UIDeviceOrientationPortrait:
-      gradientStart = CGPointMake(0.5f, 0.0f); // top center
-      gradientEnd = CGPointMake(0.5f, 1.0f); // bottom center
-      break;
-    case UIDeviceOrientationPortraitUpsideDown:
-      gradientStart = CGPointMake(0.5f, 1.0f); // bottom center
-      gradientEnd = CGPointMake(0.5f, 0.0f); // top center
-      break;
-    case UIDeviceOrientationLandscapeLeft:
-      gradientStart = CGPointMake(1.0f, 0.5f);
-      gradientEnd = CGPointMake(0.0f, 0.5f);
-      break;
-    case UIDeviceOrientationLandscapeRight:
-      gradientStart = CGPointMake(0.0f, 0.5f);
-      gradientEnd = CGPointMake(1.0f, 0.5f);
-      break;
-    default:
-      break;
-  }
-  self.fauxCardLayer.startPoint = gradientStart;
-  self.fauxCardLayer.endPoint = gradientEnd;
-}
-
 - (void)animateCardMask:(CGRect)guideFrame {
   SuppressCAAnimation(^{
     self.backgroundOverlay.frame = self.bounds;
@@ -434,7 +375,6 @@ typedef enum {
 
   if (deviceOrientation != self.deviceOrientation) {
     self.deviceOrientation = deviceOrientation;
-    [self animateFauxCardLayerToFrame:self.guideFrame];
 #if CARDIO_DEBUG
     [self rotateDebugOverlay];
 #endif
@@ -506,7 +446,6 @@ typedef enum {
 - (void)layoutSublayers {
   SuppressCAAnimation(^{
     [self setLayerPaths];
-    [self animateFauxCardLayerToFrame:self.guideFrame];
     
     CGRect guideFrame = [self guideFrame];
     CGFloat left = CGRectGetMinX(guideFrame);

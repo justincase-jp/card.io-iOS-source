@@ -36,7 +36,6 @@
 @property(nonatomic, strong, readonly)  CardIOCardScanner *scanner;
 @property(nonatomic, weak, readwrite)   id<CardIOVideoStreamDelegate> delegate;
 @property(nonatomic, strong, readwrite) UIFont *instructionsFont;
-@property(nonatomic, assign, readwrite) BOOL suppressFauxCardLayer;
 
 @end
 
