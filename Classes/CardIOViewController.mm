@@ -213,7 +213,7 @@
                                        NSStrokeWidthAttributeName : [NSNumber numberWithFloat:-1.0f]   // negative value => do both stroke & fill
                                        } mutableCopy];
 
-  attributes[NSFontAttributeName] = [UIFont boldSystemFontOfSize:18.0f];
+  attributes[NSFontAttributeName] = [UIFont systemFontOfSize:18.0f];
   attributes[NSForegroundColorAttributeName] = [UIColor colorWithWhite:1.0f alpha:0.8f];
   [button setAttributedTitle:[[NSAttributedString alloc] initWithString:title attributes:attributes] forState:UIControlStateNormal];
 
