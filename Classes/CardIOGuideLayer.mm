@@ -24,6 +24,7 @@
 #define kGuideCornerSize 35.0f
 #define kGuideOffset 8.0f
 #define kGuideAlpha 0.35f
+#define kGuideCenterAlpha 0.08f
 #define kGuideLineWidth 1.0f
 #define kAdjustFudge 0.2f  // Because without this, we see a mini gap between edge path and corner path.
 
@@ -115,7 +116,7 @@ typedef enum {
 
     _centerGuideLayer = [CAShapeLayer layer];
     _centerGuideLayer.path = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, kGuideCenterSize, kGuideCenterSize)].CGPath;
-    _centerGuideLayer.fillColor = [UIColor colorWithWhite:0.0f alpha:kGuideAlpha].CGColor;
+    _centerGuideLayer.fillColor = [UIColor colorWithWhite:0.0f alpha:kGuideCenterAlpha].CGColor;
     _centerGuideLayer.strokeColor = UIColor.whiteColor.CGColor;
     [self addSublayer:_centerGuideLayer];
     
