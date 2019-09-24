@@ -249,7 +249,7 @@ NSString * const CardIOScanningOrientationAnimationDuration = @"CardIOScanningOr
 - (void)successfulScan:(CardIOCreditCardInfo *)cardInfo {
   // Even if not showing a transitionView (because self.scannedImageDuration == 0), we still create it.
   // This is because the CardIODataEntryView gets its cardImage from the transitionView. (A bit of a kludge, yes.)
-  UIImage *annotatedImage = [CardIOCardOverlay cardImage:self.cardImage withDisplayInfo:self.readCardInfo annotated:YES];
+  UIImage *annotatedImage = [CardIOCardOverlay cardImage:self.cardImage withDisplayInfo:self.readCardInfo annotated:NO];
   CGRect cameraPreviewFrame = [self cameraPreviewFrame];
   
   CGAffineTransform r = CGAffineTransformIdentity;
